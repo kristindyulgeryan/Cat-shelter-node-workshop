@@ -1,4 +1,6 @@
-export default `<!DOCTYPE html>
+import catHtml from "../cat.html.js";
+
+export default (cats) => `<!DOCTYPE html>
 <html lang="en">
 
 <head>
@@ -30,7 +32,8 @@ export default `<!DOCTYPE html>
     <main>
         <section class="cats">
             <ul>
-                     
+            
+             ${cats.map((cat) => catHtml(cat)).join("\n")}
             </ul>
         </section>
     </main>
