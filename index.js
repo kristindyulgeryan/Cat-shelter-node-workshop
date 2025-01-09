@@ -4,45 +4,33 @@ import homePage from "./views/home/home.html.js";
 import siteCss from "./content/styles/site.css.js";
 import addBreedHtml from "./views/addBreed.html.js";
 import addCatHtml from "./views/addCat.html.js";
+import fs from "fs/promises";
 
-const cats = [
-  {
-    id: 1,
-    imageUrl:
-      "https://media.istockphoto.com/id/1443562748/photo/cute-ginger-cat.jpg?s=612x612&w=0&k=20&c=vvM97wWz-hMj7DLzfpYRmY2VswTqcFEKkC437hxm3Cg=",
-    name: "Pretty Kitty",
-    breed: "Bombay Cat",
-    description:
-      "Dominant and aggressive to other cats. Will probably eat you in your sleep. Very cute tho.",
-  },
-  {
-    id: 2,
-    imageUrl:
-      "https://ichef.bbci.co.uk/news/976/cpsprodpb/12A9B/production/_111434467_gettyimages-1143489763.jpg",
-    name: "Navcho",
-    breed: "Persian Cat",
-    description: "A talkative and affectionate cat with striking yellow eyes.",
-  },
-  {
-    id: 3,
-    imageUrl:
-      "https://media.istockphoto.com/id/1443562748/photo/cute-ginger-cat.jpg?s=612x612&w=0&k=20&c=vvM97wWz-hMj7DLzfpYRmY2VswTqcFEKkC437hxm3Cg=",
-    name: "Sisa",
-    breed: "Siamese Cat",
-    description:
-      "Loves to cuddle and nap. Requires regular grooming for its luxurious coat.",
-  },
-  {
-    id: 4,
-    imageUrl:
-      "https://media.istockphoto.com/id/1443562748/photo/cute-ginger-cat.jpg?s=612x612&w=0&k=20&c=vvM97wWz-hMj7DLzfpYRmY2VswTqcFEKkC437hxm3Cg=",
-    name: "Garry",
-    breed: "Bombay Cat",
-    description: "Mysterious and elegant. Often found lounging in sunny spots.",
-  },
-];
-
+let cats = [];
+initCats();
 const server = http.createServer((req, res) => {
+  if (req.method === "POST") {
+    let body = "";
+    req.on("data", (chunk) => {
+      body += chunk.toString();
+    });
+    req.on("end", () => {
+      const data = new URLSearchParams(body);
+      cats.push({
+        id: cats.length + 1,
+        ...Object.fromEntries(data.entries()),
+      });
+      saveCats();
+
+      res.writeHead(302, {
+        location: "/",
+      });
+
+      res.end();
+    });
+    return;
+  }
+
   if (req.url === "/styles/site.css") {
     res.writeHead(200, {
       "content-type": "text/css",
@@ -72,5 +60,15 @@ const server = http.createServer((req, res) => {
 
   res.end();
 });
+
+async function initCats() {
+  const catsJson = await fs.readFile("./cats.json", { encoding: "utf-8" });
+  cats = JSON.parse(catsJson);
+}
+
+async function saveCats() {
+  const catsJson = JSON.stringify(cats);
+  await fs.writeFile("./cats.json", catsJson, { encoding: "utf-8" });
+}
 server.listen(5000);
 console.log("Server is listening on http://localhost:5000...");
