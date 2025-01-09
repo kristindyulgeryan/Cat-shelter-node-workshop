@@ -30,11 +30,7 @@ export default `<!DOCTYPE html>
     <main>
         <section class="cats">
             <ul>
-                
-                
-               
-               
-                
+                     
             </ul>
         </section>
     </main>

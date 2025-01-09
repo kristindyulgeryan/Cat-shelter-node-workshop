@@ -1,5 +1,5 @@
 import http from "http";
-import homePage from "./views/home/index.html.js";
+import homePage from "./views/home/home.html.js";
 import siteCss from "./content/styles/site.css.js";
 import addBreedHtml from "./views/addBreed.html.js";
 import addCatHtml from "./views/addCat.html.js";
